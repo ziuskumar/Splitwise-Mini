@@ -1,10 +1,11 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import RegisterView, GroupViewSet, ExpenseViewSet, ImportBatchViewSet, ImportAnomalyViewSet
+from .views import RegisterView, GroupViewSet, ExpenseViewSet, ImportBatchViewSet, ImportAnomalyViewSet, UserViewSet
 
 router = DefaultRouter()
 router.register(r'groups', GroupViewSet, basename='group')
+router.register(r'users', UserViewSet, basename='user')
 router.register(r'expenses', ExpenseViewSet, basename='expense')
 router.register(r'import-batches', ImportBatchViewSet, basename='import-batch')
 router.register(r'anomalies', ImportAnomalyViewSet, basename='anomaly')

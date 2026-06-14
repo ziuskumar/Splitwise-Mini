@@ -77,7 +77,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     def group_expenses(self, request, pk=None):
         group = self.get_object()
         if request.method == 'GET':
-            expenses = Expense.objects.filter(group=group, is_deleted=False).prefetch_related('splits__user')
+            include_deleted = request.query_params.get('include_deleted') == 'true'
+            if include_deleted:
+                expenses = Expense.objects.filter(group=group).prefetch_related('splits__user')
+            else:
+                expenses = Expense.objects.filter(group=group, is_deleted=False).prefetch_related('splits__user')
             
             start_date = request.query_params.get('start_date')
             end_date = request.query_params.get('end_date')
@@ -421,3 +425,12 @@ class ImportAnomalyViewSet(viewsets.GenericViewSet):
             'resolved_by': anomaly.resolved_by.username,
             'resolved_at': str(anomaly.resolved_at)
         })
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all().order_by('username')
+    serializer_class = UserSerializer
+
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        return Response(UserSerializer(request.user).data)

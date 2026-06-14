@@ -1,5 +1,7 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import Layout from './components/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Groups from './pages/Groups';
@@ -8,41 +10,119 @@ import GroupExpenses from './pages/GroupExpenses';
 import GroupImport from './pages/GroupImport';
 import ImportReport from './pages/ImportReport';
 
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-50">
+        <div className="text-sm font-semibold text-slate-500 animate-pulse">
+          Loading session...
+        </div>
+      </div>
+    );
+  }
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  return <Layout>{children}</Layout>;
+}
+
+function PublicRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-50">
+        <div className="text-sm font-semibold text-slate-500 animate-pulse">
+          Loading...
+        </div>
+      </div>
+    );
+  }
+  if (user) {
+    return <Navigate to="/groups" replace />;
+  }
+  return children;
+}
+
 function App() {
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-        {/* Navigation Bar */}
-        <header className="bg-slate-900 text-white p-4 shadow-md">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 className="text-xl font-bold tracking-tight">
-              <Link to="/groups" className="hover:text-slate-300">Shared Expenses App</Link>
-            </h1>
-            <nav className="flex space-x-6 text-sm">
-              <Link to="/groups" className="hover:text-slate-300">Groups</Link>
-              <Link to="/login" className="hover:text-slate-300">Login</Link>
-              <Link to="/register" className="hover:text-slate-300 font-medium text-emerald-400">Register</Link>
-            </nav>
-          </div>
-        </header>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Authentication routes */}
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            }
+          />
 
-        {/* Main Workspace Area */}
-        <main className="flex-1 max-w-7xl w-full mx-auto p-6">
-          <Routes>
-            <Route path="/" element={<Navigate to="/groups" replace />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/groups" element={<Groups />} />
-            <Route path="/groups/:id" element={<GroupDashboard />} />
-            <Route path="/groups/:id/expenses" element={<GroupExpenses />} />
-            <Route path="/groups/:id/import" element={<GroupImport />} />
-            <Route path="/groups/:id/import/:batchId/report" element={<ImportReport />} />
-            {/* Fallback route */}
-            <Route path="*" element={<div className="p-8 text-center"><h2 className="text-xl font-bold">Page Not Found</h2><p className="text-gray-500">The page you are looking for does not exist.</p></div>} />
-          </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
+          {/* Protected Application routes wrapped in Layout */}
+          <Route
+            path="/groups"
+            element={
+              <ProtectedRoute>
+                <Groups />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:id"
+            element={
+              <ProtectedRoute>
+                <GroupDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:id/expenses"
+            element={
+              <ProtectedRoute>
+                <GroupExpenses />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:id/import"
+            element={
+              <ProtectedRoute>
+                <GroupImport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:id/import/:batchId/report"
+            element={
+              <ProtectedRoute>
+                <ImportReport />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Default fallbacks */}
+          <Route path="/" element={<Navigate to="/groups" replace />} />
+          <Route
+            path="*"
+            element={
+              <div className="flex h-screen flex-col items-center justify-center bg-slate-50">
+                <h2 className="text-xl font-bold text-slate-800">Page Not Found</h2>
+                <p className="text-xs text-slate-500 mt-1">The page you are looking for does not exist.</p>
+              </div>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
