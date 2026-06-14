@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.env
+.env
+.venv
+venv/
+ENV/
+db.sqlite3
+/server/db.sqlite3
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
