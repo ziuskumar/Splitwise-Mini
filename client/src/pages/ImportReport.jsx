@@ -119,6 +119,28 @@ export default function ImportReport() {
     }
   };
 
+  const formatRawRow = (raw) => {
+    if (!raw) return '';
+    if (typeof raw === 'string') return raw;
+    try {
+      const parts = [];
+      const keys = ['date', 'description', 'amount', 'currency', 'paid_by', 'split_with', 'split_type', 'split_details', 'notes'];
+      keys.forEach(k => {
+        if (raw[k] !== undefined && raw[k] !== null && raw[k] !== '') {
+          parts.push(`${k}: ${raw[k]}`);
+        }
+      });
+      Object.keys(raw).forEach(k => {
+        if (!keys.includes(k) && raw[k] !== undefined && raw[k] !== null && raw[k] !== '') {
+          parts.push(`${k}: ${raw[k]}`);
+        }
+      });
+      return parts.join(' | ');
+    } catch (e) {
+      return JSON.stringify(raw);
+    }
+  };
+
   if (loading && !report) {
     return (
       <div className="space-y-6">
@@ -222,8 +244,8 @@ export default function ImportReport() {
                     <td className="py-4 px-6 max-w-sm text-xs text-slate-600 font-medium leading-relaxed">
                       {anomaly.description}
                     </td>
-                    <td className="py-4 px-6 font-mono text-[10px] text-slate-500 max-w-[200px] truncate" title={anomaly.raw_row_data}>
-                      {anomaly.raw_row_data}
+                    <td className="py-4 px-6 font-mono text-[10px] text-slate-500 max-w-[200px] truncate" title={typeof anomaly.raw_row_data === 'object' ? JSON.stringify(anomaly.raw_row_data) : anomaly.raw_row_data}>
+                      {formatRawRow(anomaly.raw_row_data)}
                     </td>
                     <td className="py-4 px-6 text-right">
                       {anomaly.status === 'NEEDS_REVIEW' ? (
@@ -283,7 +305,7 @@ export default function ImportReport() {
           <div className="bg-white rounded-xl shadow-2xl relative w-full max-w-md p-6 z-10 animate-zoom-in">
             <h3 className="text-lg font-bold text-slate-800 mb-2">Resolve Manual Splits</h3>
             <p className="text-xs text-slate-500 mb-4">
-              Raw Row: <code className="bg-slate-100 px-1 py-0.5 rounded text-[10px]">{selectedAnomaly.raw_row_data}</code>
+              Raw Row: <code className="bg-slate-100 px-1 py-0.5 rounded text-[10px]">{formatRawRow(selectedAnomaly.raw_row_data)}</code>
             </p>
             <form onSubmit={handleManualSplitSubmit} className="space-y-4">
               <div className="max-h-60 overflow-y-auto space-y-3 pr-1">
