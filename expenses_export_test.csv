@@ -1,0 +1,15 @@
+date,description,amount,currency,paid_by,split_type,split_with,split_details,notes
+2026-03-01,Rent,12000,INR,Rohan,equal,Rohan;Priya;Aisha,,
+2026-03-02,Free tea,0,INR,Priya,equal,Rohan;Priya,,
+03/03/2026,Internet,900,INR,Rohan,equal,Rohan;Priya;Aisha,,
+Mar 04,Electricity,1500,INR,Priya,equal,Rohan;Priya;Aisha,,
+2026-03-05,Groceries,"1,800",INR,Aisha,equal,Rohan;Priya;Aisha,,
+2026-03-06,Water bill,300,,Rohan,equal,Rohan;Priya;Aisha,,
+2026-03-07,Streaming Netflix,15,USD,Priya,equal,Rohan;Priya;Aisha,,
+2026-03-08,Priya paid Rohan,3500,INR,Priya,,,settlement for rent,
+2026-03-10,Refund for Groceries,-300,INR,Aisha,equal,Rohan;Priya;Aisha,,
+2026-03-12,Refund for Taxi,-100,INR,Rohan,equal,Rohan;Priya,,
+2026-03-01,Rent,12000,INR,Rohan,equal,Rohan;Priya;Aisha,,
+2026-03-13,Dinner Party,1000,INR,Rohan,unequal,Rohan;Priya;Aisha,Rohan 500; Priya 300; Aisha 200,
+2026-03-14,Cleaning supplies,600,INR,Rohan,equal,Rohan;Priya;Aisha,,Aisha not charged on this one
+2026-03-15,Goa beach drinks,100,USD,Rohan,equal,Rohan;Priya;Dev,,Goa trip expense
